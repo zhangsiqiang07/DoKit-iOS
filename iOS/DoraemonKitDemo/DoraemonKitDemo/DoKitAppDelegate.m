@@ -16,11 +16,11 @@
 #import <DoraemonKit/DoraemonAppInfoViewController.h>
 #import <fmdb/FMDB.h>
 
-#if __has_include(<FBRetainCycleDetector/FBRetainCycleDetector.h>)
-#define XXX 1
-#else
-#define XXX 2
-#endif
+//#if __has_include(<FBRetainCycleDetector/FBRetainCycleDetector.h>)
+//#define XXX 1
+//#else
+//#define XXX 2
+//#endif
 
 @interface DoKitAppDelegate ()
 

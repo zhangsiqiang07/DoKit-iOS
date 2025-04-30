@@ -105,10 +105,6 @@ void removeViewController(UIViewController *viewController, BOOL isAnimated) {
                     [self.view.window.windowScene openURL:settingUrl options:nil completionHandler:nil];
                 } else if (@available(iOS 10.0, *)) {
                     [UIApplication.sharedApplication openURL:settingUrl options:@{} completionHandler:nil];
-                } else {
-                    if ([UIApplication.sharedApplication canOpenURL:settingUrl]) {
-                        [UIApplication.sharedApplication openURL:settingUrl];
-                    }
                 }
             }];
             UIAlertAction *cancelAlertAction = [UIAlertAction actionWithTitle:@"暂不开启" style:UIAlertActionStyleCancel handler:^(UIAlertAction *_Nonnull __attribute__((unused)) action) {

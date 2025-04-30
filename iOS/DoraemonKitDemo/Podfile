@@ -1,22 +1,75 @@
-platform :ios, '9.0'
+require "fileutils"
 
-# use_frameworks!
+platform :ios, '12.0'
+
+use_frameworks!
 # install! 'cocoapods', generate_multiple_pod_projects: true
 
 target 'DoraemonKitDemo' do
   #pod 'WeexSDK', :git => 'git@github.com:apache/incubator-weex.git', :tag => '0.26.0'
   #pod 'DoraemonKit', :subspecs => ['Core','WithLogger','WithGPS','WithLoad','WithWeex', 'WithDatabase', 'WithMLeaksFinder'],  :path => '../../'
   #pod 'DoraemonKit', :subspecs => ['Core'],  :path => '../../'
-  pod 'DoraemonKit', :subspecs => ['Core', 'WithLogger', 'WithGPS', 'WithLoad', 'WithDatabase', 'WithMLeaksFinder', 'WithWeex' , 'WithMultiControl'], :path => '../../'
-  pod 'AFNetworking', '~> 4.0'
-  pod 'SDWebImage', '~> 5.11'
-  pod 'SocketRocket', '~> 0.5'
-  pod 'SDWebImageWebPCoder', '~> 0.8'
-  # pod 'FBRetainCycleDetector', '~> 0.1'
-  # FBRetainCycleDetector ~> 0.2 版本无法在 Xcode 12 编译通过
-  pod 'FBRetainCycleDetector', :git => 'git@github.com:facebook/FBRetainCycleDetector.git', :branch => 'master'
-  # pod 'fishhook', '~> 0.2'
-  pod 'YYDebugDatabase', '~> 2.1'
+  pod 'DoraemonKit', :subspecs => [
+      'Core',
+      'WithLogger',
+      'WithGPS',
+      'WithLoad',
+      'WithDatabase',
+      'WithMLeaksFinder',
+      'WithWeex',
+      'WithMultiControl'
+    ], :path => '../../'
+  
+  pod 'AFNetworking', '4.0.1'
+  pod 'SDWebImage', '5.21.0'
+  pod 'SocketRocket', '0.7.1'
+  pod 'SDWebImageWebPCoder', '0.14.6'
+  pod 'YYDebugDatabase', '2.1.1'
   pod 'Masonry', '0.6.3'
-  pod 'JSONModel','~>1.4'
+  pod 'JSONModel','1.8.0'
+  
+  # 囿于 import 写法, 无法显式导入, 注意版本号依然是 0.1.4
+  # pod 'FBRetainCycleDetector', :git => 'git@github.com:facebook/FBRetainCycleDetector.git', :branch => 'main', :tag => '0.1.4'
+end
+
+def find_and_replace(dir, findstr, replacestr)
+  Dir[dir].each do |name|
+      FileUtils.chmod("+w", name) #add
+      text = File.read(name)
+      replace = text.gsub(findstr,replacestr)
+      if text != replace
+          puts "Fix: " + name
+          File.open(name, "w") { |file| file.puts replace }
+          STDOUT.flush
+      end
+  end
+  Dir[dir + '*/'].each(&method(:find_and_replace))
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # 明确版本
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['SWIFT_VERSION'] = "5.0"
+      # M1 模拟器
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = '$(inherited) i386 arm64'
+      # 特性已废弃
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      # 确保后兼容选项关闭
+      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
+      # issue: ``development team``
+      config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""
+      config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
+      config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
+      # issue: ``plist``
+      config.build_settings['GENERATE_INFOPLIST_FILE'] = "NO"
+      
+      # 需要强行修改源码, 参见 https://github.com/facebook/FBRetainCycleDetector/issues/115
+      if target.name == 'FBRetainCycleDetector'
+        find_and_replace("Pods/FBRetainCycleDetector/FBRetainCycleDetector/Layout/Classes/FBClassStrongLayout.mm",
+              "layoutCache[currentClass] = ivars;", "layoutCache[(id<NSCopying>)currentClass] = ivars;")
+      end
+    end
+  end
 end
