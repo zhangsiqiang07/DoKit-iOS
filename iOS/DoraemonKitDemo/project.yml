@@ -1,0 +1,189 @@
+# https://github.com/yonaskolb/XcodeGen/blob/master/Docs/ProjectSpec.md
+# https://help.apple.com/xcode/mac/9.0/index.html?localePath=en.lproj#/dev7fe737ce0
+
+# 项目名
+name: DoraemonKitDemo
+settings:
+  CODE_SIGN_STYLE: Automatic
+  DEVELOPMENT_TEAM: 2J25KWTFJ2
+  ENABLE_BITCODE: NO
+  GCC_PRECOMPILE_PREFIX_HEADER: YES
+  GCC_PREFIX_HEADER: DoraemonKitDemo/DoraemonKitDemo-PrefixHeader.pch
+  COMPILER_INDEX_STORE_ENABLE: NO
+  IPHONEOS_DEPLOYMENT_TARGET: 12.0
+attributes:
+  ORGANIZATIONNAME: yixiang
+
+options:
+  bundleIdPrefix: com.darkthanblack
+  deploymentTarget:
+    iOS: 12.0
+
+targets:
+  DoraemonKitDemo:
+    type: application
+    platform: iOS
+    platformSuffix: ""
+    
+    scheme:
+      buildImplicitDependencies: true
+    
+    sources:
+      - path: DoraemonKitDemo
+        excludes:
+          - "**/*.xcodeproj"
+          - "**/*.lproj"
+          # 明确引入 Development Pods 路径
+          - path: Pods/Development\ Pods
+            type: group
+            optional: true
+          # 额外的资源文件
+          - path: DoraemonKitDemo/Base.lproj/LaunchScreen.storyboard
+            type: file
+            buildPhase: resources
+          - path: DoraemonKitDemo/Resource
+            type: folder
+            buildPhase: resources
+    
+    resources:
+      - path: DoraemonKitDemo/Resource
+      - path: DoraemonKitDemo/Assets.xcassets
+      - path: DoraemonKitDemo/Base.lproj/LaunchScreen.storyboard
+      - path: DoraemonKitDemo/zh-Hans.lproj/LaunchScreen.strings
+      - path: DoraemonKitDemo/zh-Hans.lproj/DoraemonKitDemo.strings
+      - path: DoraemonKitDemo/en.lproj/DoraemonKitDemo.strings
+    
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.darkthanblack.dokit
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: DoraemonKitDemo/Info.plist
+        TARGETED_DEVICE_FAMILY: 1  # iPhone
+        IPHONEOS_DEPLOYMENT_TARGET: 12.0
+        # LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
+        FRAMEWORK_SEARCH_PATHS:
+          - $(inherited)
+          - "$(PODS_CONFIGURATION_BUILD_DIR)/*"
+          - "$(PODS_ROOT)/../../DoraemonKit/Framework"
+        LIBRARY_SEARCH_PATHS:
+          - $(inherited)
+        # 显式写明 COCOAPODS
+        OTHER_SWIFT_FLAGS:
+          - "$(inherited) -D COCOAPODS"
+        # [Fix Xcode 15 Warning: Mixed ObjC ABI](https://stackoverflow.com/questions/77200555)
+        OTHER_LDFLAGS:
+          - "$(inherited) -ld_classic"
+      # 防止 DEBUG 宏莫名丢失
+      debug:
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - $(inherited)
+          - DEBUG=1
+          - COCOAPODS=1
+      release:
+        GCC_PREPROCESSOR_DEFINITIONS:
+          - $(inherited)
+          - COCOAPODS=1
+    
+    dependencies:
+      - framework: Pods_DoraemonKitDemo.framework
+        embed: true
+      - framework: "$(PODS_ROOT)/../../DoraemonKit/Framework/DoraemonLoadAnalyze.framework"
+        embed: false
+    
+    # preBuildScripts:
+    #   - name: "[CP] Check Pods Manifest.lock"
+    #     script: |
+    #       diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" > /dev/null
+    #       if [ $? != 0 ] ; then
+    #           # print error to STDERR
+    #           echo "error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation." >&2
+    #           exit 1
+    #       fi
+    #       # This output is used by Xcode 'outputs' to avoid re-running this script phase.
+    #       echo "SUCCESS" > "${SCRIPT_OUTPUT_FILE_0}"
+    #     inputFiles:
+    #       - "${PODS_PODFILE_DIR_PATH}/Podfile.lock"
+    #       - "${PODS_ROOT}/Manifest.lock"
+    #     outputFiles:
+    #       - "$(DERIVED_FILE_DIR)/Pods-DoraemonKitDemo-checkManifestLockResult.txt"
+    
+#     postBuildScripts:
+#       - name: "[CP] Embed Pods Frameworks"
+#         script: |
+#           "${PODS_ROOT}/Target Support Files/Pods-DoraemonKitDemo/Pods-DoraemonKitDemo-frameworks.sh"
+#         inputFiles:
+#           - "${PODS_ROOT}/Target Support Files/Pods-DoraemonKitDemo/Pods-DoraemonKitDemo-frameworks.sh"
+#           - "${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework"
+#           - "${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework"
+#           - "${BUILT_PRODUCTS_DIR}/DoraemonKit/DoraemonKit.framework"
+#           - "${PODS_ROOT}/../../DoraemonKit/Framework/DoraemonLoadAnalyze.framework"
+#           - "${BUILT_PRODUCTS_DIR}/FBRetainCycleDetector/FBRetainCycleDetector.framework"
+#           - "${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework"
+#           - "${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework"
+#           - "${BUILT_PRODUCTS_DIR}/JSONModel/JSONModel.framework"
+#           - "${BUILT_PRODUCTS_DIR}/Mantle/Mantle.framework"
+#           - "${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework"
+#           - "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
+#           - "${BUILT_PRODUCTS_DIR}/SDWebImageWebPCoder/SDWebImageWebPCoder.framework"
+#           - "${BUILT_PRODUCTS_DIR}/SocketRocket/SocketRocket.framework"
+#           - "${BUILT_PRODUCTS_DIR}/WXDevtool/WXDevtool.framework"
+#           - "${BUILT_PRODUCTS_DIR}/WeexSDK/WeexSDK.framework"
+#           - "${BUILT_PRODUCTS_DIR}/YYDebugDatabase/YYDebugDatabase.framework"
+#           - "${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework"
+#         outputFiles:
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DoraemonKit.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DoraemonLoadAnalyze.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBRetainCycleDetector.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSONModel.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mantle.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImageWebPCoder.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WXDevtool.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WeexSDK.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYDebugDatabase.framework"
+#           - "${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libwebp.framework"
+
+#     info:
+#       path: DoraemonKitDemo/Info.plist
+#       properties:
+#         CFBundleDisplayName: DoraemonKitDemo
+#         CFBundleExecutable: $(EXECUTABLE_NAME)
+#         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+#         CFBundleInfoDictionaryVersion: 6.0
+#         CFBundleName: $(PRODUCT_NAME)
+#         CFBundlePackageType: APPL
+#         CFBundleShortVersionString: 1.0.0
+#         CFBundleVersion: 1
+#         LSRequiresIPhoneOS: true
+#         UILaunchStoryboardName: LaunchScreen
+#         UIRequiredDeviceCapabilities: [armv7]
+#         UISupportedInterfaceOrientations:
+#           - UIInterfaceOrientationPortrait
+#         NSAppTransportSecurity:
+#           NSAllowsArbitraryLoads: true
+
+# packages:
+#   AFNetworking:
+#     url: https://github.com/AFNetworking/AFNetworking
+#     from: 4.0.0
+#   CocoaLumberjack:
+#     url: https://github.com/CocoaLumberjack/CocoaLumberjack
+#     from: 3.6.0
+#   FMDB:
+#     url: https://github.com/ccgus/fmdb
+#     from: 2.7.5
+#   JSONModel:
+#     url: https://github.com/jsonmodel/jsonmodel
+#     from: 1.8.0
+#   Masonry:
+#     url: https://github.com/SnapKit/Masonry
+#     from: 1.1.0
+#   SDWebImage:
+#     url: https://github.com/SDWebImage/SDWebImage
+#     from: 5.0.0
