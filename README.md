@@ -23,9 +23,23 @@ DoKit 前身为 DoraemonKit，原为偏重于 iOS 的移动端位本地调试工
 
 ## HOW?
 
-* 删除 iOS 外其他平台代码
+* DEMO 工程修复
+  * [x] 通过 xcodegen 的 yml 配合 Podfile 控制
+  * [x] FBRetainCycleDetector 已失去维护，参考 [issue-115](https://github.com/facebook/FBRetainCycleDetector/issues/115)，在 Podfile 内直接对源码进行处理，做一个临时修复
+
+* 平台削除
+  * [x] 非 iOS 端位代码
+  * [ ] 滴滴平台相关代码
+
 * 基于 Xcode16.3, iOS18 进行适配
-* 
+  * [x] 首页崩溃，参考 [PR-1176](https://github.com/didi/DoKit/pull/1176) 
+
+
+
+
+## FIXED
+
+* [x] UI 结构功能失效，一直停留在最上层的 window，参考 [issue-1065](https://github.com/didi/DoKit/issues/1065) 的 [评论](https://github.com/didi/DoKit/issues/1065#issuecomment-1765564254) 完成修改
 
 
 

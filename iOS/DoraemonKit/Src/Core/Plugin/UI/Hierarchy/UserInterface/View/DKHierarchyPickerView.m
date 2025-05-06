@@ -40,11 +40,10 @@ NS_ASSUME_NONNULL_END
     return [self recursiveSubviewsAtPoint:tapPointInWindow inView:windowForSelection skipHiddenViews:YES];
 }
 
+// Select the deepest visible view at the tap point. This generally corresponds to what the user wants to select.
 - (NSArray<UIView *> *)recursiveSubviewsAtPoint:(CGPoint)pointInView inView:(UIView *)view skipHiddenViews:(BOOL)skipHidden {
     NSMutableArray<UIView *> *subviewsAtPoint = [NSMutableArray array];
-    NSEnumerator<__kindof UIView *> *enumerator = [view.subviews reverseObjectEnumerator];
-    UIView *subview = nil;
-    while ((subview = enumerator.nextObject)) {
+    for (UIView *subview in view.subviews) {
         BOOL isHidden = subview.hidden || subview.alpha < 0.01;
         if (skipHidden && isHidden) {
             continue;
@@ -60,7 +59,6 @@ NS_ASSUME_NONNULL_END
         if (subviewContainsPoint || !subview.clipsToBounds) {
             CGPoint pointInSubview = [view convertPoint:pointInView toView:subview];
             [subviewsAtPoint addObjectsFromArray:[self recursiveSubviewsAtPoint:pointInSubview inView:subview skipHiddenViews:skipHidden]];
-            break;
         }
     }
     
