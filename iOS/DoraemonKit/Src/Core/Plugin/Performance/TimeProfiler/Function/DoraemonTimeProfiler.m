@@ -9,8 +9,11 @@
 #import "DoraemonTimeProfilerCore.h"
 #include <objc/message.h>
 #include <sys/sysctl.h>
-#import "DoraemonHealthManager.h"
 #import "DoraemonDefine.h"
+
+#if DoraemonWithDiDi
+#import "DoraemonHealthManager.h"
+#endif
 
 static NSTimeInterval startTime;
 static NSTimeInterval stopTime;
@@ -67,7 +70,9 @@ static NSTimeInterval stopTime;
 /// 打印调用记录
 + (void)printRecords {
     NSString *result = [self getRecordsResult];
+#if DoraemonWithDiDi
     [DoraemonHealthManager sharedInstance].costDetail = result;
+#endif
     NSLog(@"%@",result);
 }
 

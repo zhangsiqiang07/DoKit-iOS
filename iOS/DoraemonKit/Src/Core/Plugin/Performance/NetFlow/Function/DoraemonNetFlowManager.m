@@ -11,8 +11,11 @@
 #import "NSObject+Doraemon.h"
 #import "DoraemonNetworkInterceptor.h"
 #import "UIViewController+Doraemon.h"
-#import "DoraemonHealthManager.h"
 #import <objc/runtime.h>
+
+#if DoraemonWithDiDi
+#import "DoraemonHealthManager.h"
+#endif
 
 @interface NSInputStream (DoraemonHttpBodyCallBack)
 
@@ -153,7 +156,9 @@
         httpModel.topVc = NSStringFromClass([[UIViewController topViewControllerForKeyWindow] class]);
         
         [[DoraemonNetFlowDataSource shareInstance] addHttpModel:httpModel];
+#if DoraemonWithDiDi
         [[DoraemonHealthManager sharedInstance] addHttpModel:httpModel];
+#endif
     }];
 }
 

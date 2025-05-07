@@ -17,14 +17,14 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-iOS各式各样的工具集合
+自行维护 DoKit 的 iOS 部分，致力于回归工具初心
                        DESC
 
-  s.homepage         = 'https://www.dokit.cn'
+  s.homepage         = 'https://darkthanblack.github.io'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'Apache-2.0', :file => 'LICENSE' }
   s.author           = { 'OrangeLab' => 'orange-lab@didiglobal.com' }
-  s.source           = { :git => 'https://github.com/didi/DoraemonKit.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/darkThanBlack/DoKit-iOS.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '9.0'
@@ -76,6 +76,19 @@ iOS各式各样的工具集合
     ss.resource_bundle = {
       'DoraemonKit' => 'iOS/DoraemonKit/Resource/**/*'
     }
+#    ss.dependency 'GCDWebServer'
+#    ss.dependency 'GCDWebServer/WebUploader'
+#    ss.dependency 'GCDWebServer/WebDAV'
+#    ss.dependency 'FMDB'
+  end
+  
+  s.subspec 'DiDi' do |ss|
+    ss.source_files = 'iOS/DoraemonKit/Src/DiDi/**/*.{h,m,c,mm}'
+    ss.pod_target_xcconfig = {
+      'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithDiDi'
+    }
+    
+    ss.dependency 'DoraemonKit/Core'
     ss.dependency 'GCDWebServer'
     ss.dependency 'GCDWebServer/WebUploader'
     ss.dependency 'GCDWebServer/WebDAV'

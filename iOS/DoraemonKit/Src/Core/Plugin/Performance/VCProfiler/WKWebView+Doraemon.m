@@ -8,7 +8,10 @@
 #import "WKWebView+Doraemon.h"
 #import <objc/runtime.h>
 #import "NSObject+Doraemon.h"
+
+#if DoraemonWithDiDi
 #import "DoraemonHealthManager.h"
+#endif
 
 @implementation WKWebView (Doraemon)
 
@@ -19,7 +22,9 @@
 - (WKNavigation *)doraemon_loadRequest:(NSURLRequest *)request{
     WKNavigation *navigation = [self doraemon_loadRequest:request];
     NSString *urlString = request.URL.absoluteString;
+#if DoraemonWithDiDi
     [[DoraemonHealthManager sharedInstance] openH5Page:urlString];
+#endif
     return navigation;
 }
 

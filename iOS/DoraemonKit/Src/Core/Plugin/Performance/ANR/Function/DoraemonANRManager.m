@@ -12,7 +12,10 @@
 #import "DoraemonAppInfoUtil.h"
 #import "Doraemoni18NUtil.h"
 #import "DoraemonANRTool.h"
+
+#if DoraemonWithDiDi
 #import "DoraemonHealthManager.h"
+#endif
 
 //默认超时间隔
 static CGFloat const kDoraemonBlockMonitorTimeInterval = 0.2f;
@@ -69,7 +72,9 @@ static CGFloat const kDoraemonBlockMonitorTimeInterval = 0.2f;
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
+#if DoraemonWithDiDi
         [[DoraemonHealthManager sharedInstance] addANRInfo:info];
+#endif
         if (self.block) {
             self.block(info);
         }

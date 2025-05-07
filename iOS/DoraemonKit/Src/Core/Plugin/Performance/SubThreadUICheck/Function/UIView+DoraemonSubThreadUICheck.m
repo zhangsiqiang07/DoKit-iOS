@@ -10,8 +10,11 @@
 #import "DoraemonCacheManager.h"
 #import "DoraemonSubThreadUICheckManager.h"
 #import "DoraemonUtil.h"
-#import "DoraemonHealthManager.h"
 #import "DoraemonBacktraceLogger.h"
+
+#if DoraemonWithDiDi
+#import "DoraemonHealthManager.h"
+#endif
 
 @implementation UIView (DoraemonSubThreadUICheck)
 
@@ -47,7 +50,9 @@
                                   @"content":report
                                   };
             [[DoraemonSubThreadUICheckManager sharedInstance].checkArray addObject:dic];
+#if DoraemonWithDiDi
             [[DoraemonHealthManager sharedInstance] addSubThreadUI:dic];
+#endif
         }
     }
 }

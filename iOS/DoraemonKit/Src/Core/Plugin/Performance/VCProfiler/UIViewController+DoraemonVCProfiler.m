@@ -9,11 +9,14 @@
 #import "NSObject+Doraemon.h"
 #import "DoraemonDefine.h"
 #import <objc/runtime.h>
-#import "DoraemonHealthManager.h"
 #import "DoraemonCacheManager.h"
 #import "DoraemonManager.h"
 
-//#define Doraemon_VC_Profiler_LOG_ENABLE 
+#if DoraemonWithDiDi
+#import "DoraemonHealthManager.h"
+#endif
+
+//#define Doraemon_VC_Profiler_LOG_ENABLE
 
 #ifdef Doraemon_VC_Profiler_LOG_ENABLE
 #define VCLog(...) NSLog(__VA_ARGS__)
@@ -32,7 +35,9 @@ static void doraemon_vc_profiler_viewDidLoad(UIViewController *kvo_self, SEL _se
     IMP origin_imp = method_getImplementation(class_getInstanceMethod(origin_cls, _sel));
     assert(origin_imp != NULL);
 
+#if DoraemonWithDiDi
     [[DoraemonHealthManager sharedInstance] startEnterPage:origin_cls];
+#endif
     
     void (*func)(UIViewController *, SEL) = (void (*)(UIViewController *, SEL))origin_imp;
     func(kvo_self, _sel);
@@ -58,7 +63,9 @@ static void doraemon_vc_profiler_viewDidAppear(UIViewController *kvo_self, SEL _
     void (*func)(UIViewController *, SEL, BOOL) = (void (*)(UIViewController *, SEL, BOOL))origin_imp;
     
     func(kvo_self, _sel, animated);
+#if DoraemonWithDiDi
     [[DoraemonHealthManager sharedInstance] enterPage:origin_cls];
+#endif
 }
 
 static void doraemon_vc_profiler_viewWillDisAppear(UIViewController *kvo_self, SEL _sel, BOOL animated) {
@@ -81,7 +88,9 @@ static void doraemon_vc_profiler_viewDidDisappear(UIViewController *kvo_self, SE
     void (*func)(UIViewController *, SEL, BOOL) = (void (*)(UIViewController *, SEL, BOOL))origin_imp;
 
     func(kvo_self, _sel, animated);
+#if DoraemonWithDiDi
     [[DoraemonHealthManager sharedInstance] leavePage:origin_cls];
+#endif
 }
 
 

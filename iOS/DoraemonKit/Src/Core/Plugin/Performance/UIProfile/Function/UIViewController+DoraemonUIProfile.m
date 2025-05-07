@@ -11,7 +11,10 @@
 #import "DoraemonDefine.h"
 #import <objc/runtime.h>
 #import "DoraemonUIProfileWindow.h"
+
+#if DoraemonWithDiDi
 #import "DoraemonHealthManager.h"
+#endif
 
 @interface UIViewController ()
 
@@ -30,16 +33,24 @@
     });
 }
 
+- (BOOL)isDoraemonHealthStart {
+#if DoraemonWithDiDi
+    return [DoraemonHealthManager sharedInstance].start;
+#else
+    return false;
+#endif
+}
+
 - (void)doraemon_viewDidAppear:(BOOL)animated{
     [self doraemon_viewDidAppear:animated];
-    if (![DoraemonHealthManager sharedInstance].start) {
+    if (![self isDoraemonHealthStart]) {
         [self profileViewDepth];
     }
 }
 
 - (void)doraemon_viewWillDisappear:(BOOL)animated
 {
-    if ([DoraemonHealthManager sharedInstance].start) {
+    if ([self isDoraemonHealthStart]) {
         [self profileViewDepth];
     }
     [self doraemon_viewWillDisappear:animated];
@@ -51,9 +62,11 @@
     if (![DoraemonUIProfileManager sharedInstance].enable) {
         return;
     }
+#if DoraemonWithDiDi
     if ([[DoraemonHealthManager sharedInstance] blackList:[self class]]){
-        return ;
+        return;
     }
+#endif
     [self travelView:self.view depth:0];
     [self showUIProfile];
 }
@@ -80,18 +93,19 @@
     NSArray *result = [[tmp reverseObjectEnumerator] allObjects];
     NSString *detail = [result componentsJoinedByString:@"\r\n"];
     
-    if ([DoraemonHealthManager sharedInstance].start) {
+    if ([self isDoraemonHealthStart]) {
+#if DoraemonWithDiDi
         [[DoraemonHealthManager sharedInstance] addUILevel:@{
             @"level":self.doraemon_depth,
             @"detail":detail
         }];
-    }else{
+#endif
+    } else {
         [[DoraemonUIProfileWindow sharedInstance] showWithDepthText:text detailInfo:detail];
         
         self.doraemon_depthView.layer.borderWidth = 1;
         self.doraemon_depthView.layer.borderColor = [UIColor redColor].CGColor;
     }
-
 }
 
 - (void)travelView:(UIView *)view depth:(int)depth

@@ -22,10 +22,13 @@
 #import "DoraemonStatisticsUtil.h"
 #import "DoraemonANRManager.h"
 #import "DoraemonLargeImageDetectionManager.h"
-#import "DoraemonMockManager.h"
 #import "DoraemonNetFlowOscillogramWindow.h"
 #import "DoraemonNetFlowManager.h"
+
+#if DoraemonWithDiDi
+#import "DoraemonMockManager.h"
 #import "DoraemonHealthManager.h"
+#endif
 
 #if DoraemonWithGPS
 #import "DoraemonGPSMocker.h"
@@ -193,22 +196,24 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
     
     //统计开源项目使用量 不用于任何恶意行为
     [[DoraemonStatisticsUtil shareInstance] upLoadUserInfo];
-    
+
+#if DoraemonWithDiDi
     //拉取最新的mock数据
     [[DoraemonMockManager sharedInstance] queryMockData:^(int flag) {
         DoKitLog(@"mock get data, flag == %i",flag);
     }];
+    
+    //开启健康体检
+    if ([[DoraemonCacheManager sharedInstance] healthStart]) {
+        [[DoraemonHealthManager sharedInstance] startHealthCheck];
+    }
+#endif
     
     //Weex工具的初始化
 #if DoraemonWithWeex
     [DoraemonWeexLogDataSource shareInstance];
     [DoraemonWeexInfoDataManager shareInstance];
 #endif
-    
-    //开启健康体检
-    if ([[DoraemonCacheManager sharedInstance] healthStart]) {
-        [[DoraemonHealthManager sharedInstance] startHealthCheck];
-    }
     
 }
 

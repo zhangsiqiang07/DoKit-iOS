@@ -9,7 +9,6 @@
 #import "DoraemonDemoMultiControlViewController.h"
 #import <DoraemonKit/UIView+Doraemon.h>
 #import "DoraemonDefine.h"
-#import "DoraemonHealthAlertView.h"
 #import "DoraemonDemoMultiConLongPressGesture.h"
 #import "DoraemonDemoMultiConPinchGesture.h"
 #import "DoraemonDemoMultiConRotationGesture.h"
@@ -19,6 +18,11 @@
 #import "DoraemonMCCommandExcutor.h"
 #import "DoraemonMCMessagePackager.h"
 #import "DoraemonDemoMultiSlideView.h"
+
+#if DoraemonWithDiDi
+#import "DoraemonHealthAlertView.h"
+#endif
+
 @interface DoraemonMCEventHandler1: DoraemonMCEventHandler
 
 
@@ -199,6 +203,7 @@
 }
 
 - (void)controlEvent3{
+#if DoraemonWithDiDi
     DoraemonHealthAlertView *alertView = [[DoraemonHealthAlertView alloc] init];
     [alertView renderUI:DoraemonLocalizedString(@"UIControl 点击事件 自定义Alertview") placeholder:@[] inputTip:@[DoraemonLocalizedString(@"测试用例名称"),DoraemonLocalizedString(@"测试人名称")] ok:DoraemonLocalizedString(@"提交") quit:DoraemonLocalizedString(@"丢弃") cancle:DoraemonLocalizedString(@"取消") okBlock:^{
 
@@ -210,6 +215,7 @@
     }];
 
     [self.view addSubview:alertView];
+#endif
 }
 
 - (void)showAlertMessage{

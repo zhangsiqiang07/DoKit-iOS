@@ -7,11 +7,15 @@
 
 #import "MLeaksFinder.h"
 #import "DoraemonMemoryLeakData.h"
+#import "DoraemonDefine.h"
+
 #if _INTERNAL_MLF_RC_ENABLED
 #import <FBRetainCycleDetector/FBRetainCycleDetector.h>
 #endif
+
+#if DoraemonWithDiDi
 #import "DoraemonHealthManager.h"
-#import "DoraemonDefine.h"
+#endif
 
 @interface DoraemonMemoryLeakData()
 
@@ -56,7 +60,9 @@
         @"retainCycle":STRING_NOT_NULL(retainCycle)
     };
     [_dataArray addObject:info];
+#if DoraemonWithDiDi
     [[DoraemonHealthManager sharedInstance] addLeak:info];
+#endif
     
     if (self.block) {
         self.block(info);
