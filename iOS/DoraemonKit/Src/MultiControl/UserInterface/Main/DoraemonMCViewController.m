@@ -13,8 +13,8 @@
 #import "DoraemonAppInfoUtil.h"
 #import "DoraemonManager.h"
 #import "UIColor+Doraemon.h"
-#import <DoraemonKit/DKQRCodeScanViewController.h>
-#import <DoraemonKit/DKMultiControlStreamManager.h>
+#import <DoKit/DKQRCodeScanViewController.h>
+#import <DoKit/DKMultiControlStreamManager.h>
 
 @interface DoraemonMCViewController () <DKMultiControlStreamManagerStateListener>
 

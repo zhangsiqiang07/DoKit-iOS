@@ -7,8 +7,8 @@
 //
 
 #import "DoraemonDemoBaseViewController.h"
-#import <DoraemonKit/DoraemonDefine.h>
-#import <DoraemonKit/DoraemonNavBarItemModel.h>
+#import <DoKit/DoraemonDefine.h>
+#import <DoKit/DoraemonNavBarItemModel.h>
 
 @interface DoraemonDemoBaseViewController ()
 

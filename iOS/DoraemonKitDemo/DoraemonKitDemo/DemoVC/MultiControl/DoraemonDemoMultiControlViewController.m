@@ -7,7 +7,7 @@
 //
 
 #import "DoraemonDemoMultiControlViewController.h"
-#import <DoraemonKit/UIView+Doraemon.h>
+#import <DoKit/UIView+Doraemon.h>
 #import "DoraemonDefine.h"
 #import "DoraemonDemoMultiConLongPressGesture.h"
 #import "DoraemonDemoMultiConPinchGesture.h"

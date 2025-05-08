@@ -15,7 +15,7 @@
  */
 
 #import "DKQRCodeScanViewController.h"
-#import <DoraemonKit/DKQRCodeScanView.h>
+#import <DoKit/DKQRCodeScanView.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

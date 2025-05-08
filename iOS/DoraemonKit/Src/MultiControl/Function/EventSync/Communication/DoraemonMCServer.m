@@ -6,7 +6,7 @@
 //
 
 #import "DoraemonMCServer.h"
-#import <DoraemonKit/DKMultiControlStreamManager.h>
+#import <DoKit/DKMultiControlStreamManager.h>
 
 @implementation DoraemonMCServer
 

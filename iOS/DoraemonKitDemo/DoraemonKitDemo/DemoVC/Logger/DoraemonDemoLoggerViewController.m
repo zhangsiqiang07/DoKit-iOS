@@ -7,7 +7,7 @@
 //
 
 #import "DoraemonDemoLoggerViewController.h"
-#import <DoraemonKit/UIView+Doraemon.h>
+#import <DoKit/UIView+Doraemon.h>
 #import "DoraemonDefine.h"
 
 #if __has_include(<CocoaLumberjack/CocoaLumberjack.h>)

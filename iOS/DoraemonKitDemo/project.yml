@@ -65,10 +65,12 @@ targets:
           - $(inherited)
         # 显式写明 COCOAPODS
         OTHER_SWIFT_FLAGS:
-          - "$(inherited) -D COCOAPODS"
+          - $(inherited) 
+          - "-D COCOAPODS"
         # [Fix Xcode 15 Warning: Mixed ObjC ABI](https://stackoverflow.com/questions/77200555)
         OTHER_LDFLAGS:
-          - "$(inherited) -ld_classic"
+          - $(inherited) 
+          - "-ld_classic"
       # 防止 DEBUG 宏莫名丢失
       debug:
         GCC_PREPROCESSOR_DEFINITIONS:

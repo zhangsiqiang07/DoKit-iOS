@@ -7,7 +7,7 @@
 
 #import "DoraemonMCEventHandler.h"
 #import <objc/runtime.h>
-#import <DoraemonKit/DoraemonMCServer.h>
+#import <DoKit/DoraemonMCServer.h>
 #import "DoraemonMCEventCapturer.h"
 #import "DoraemonMCXPathSerializer.h"
 #import "DoraemonMCGustureSerializer.h"

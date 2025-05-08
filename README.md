@@ -24,17 +24,21 @@ DoKit 前身为 DoraemonKit，原为偏重于 iOS 的移动端位本地调试工
 ## Usage
 
 ```ruby
-# Podfile
-pod 'DoKit', :subspecs => ['Core'], :git => 'ssh://git@github.com:darkThanBlack/DoKit-iOS.git', :branch => 'master', :configurations => ['Debug']
+  pod 'DoKit',
+    :subspecs => ['Core'],
+    :git => 'https://github.com/darkThanBlack/DoKit-iOS.git',
+    :branch => 'master',
+    :commit => '7d690fb20062d7b9f2e7d08aa370679b59330b9b',
+    :configurations => ['Debug']
 ```
 
 注意，根据 [官方文档](https://guides.cocoapods.org/syntax/podfile.html#pod) 中 ``Build configurations`` 这一小节，pod 的 configurations 不会对依赖项生效，需要手动一一指明，这里仅用无依赖的 core 作为例子。
 
+目前没有打 tag 正式提交，为了避免不严谨的提交导致扰动，建议写死 ``commit``。
+
 
 
 ## Feature
-
-
 
 #### 更名
 
@@ -76,11 +80,13 @@ pod 'DoKit', :subspecs => ['Core'], :git => 'ssh://git@github.com:darkThanBlack/
 
 
 
-## Fixed
+## Fix
 
 * [x] 功能：UI 结构失效，参考 [issue-1065](https://github.com/didi/DoKit/issues/1065) 的 [评论](https://github.com/didi/DoKit/issues/1065#issuecomment-1765564254)
 
 
 
-## TODO
+
+
+## Release
 
