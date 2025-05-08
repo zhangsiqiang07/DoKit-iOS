@@ -6,18 +6,11 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'DoraemonKit'
-  s.version          = '3.1.3'
-  s.summary          = 'iOS 各式各样的工具集合'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
+  s.name             = 'DoKit'
+  s.version          = '4.0.0'
+  s.summary          = '自行维护 DoraemonKit(DoKit) 的 iOS 部分'
   s.description      = <<-DESC
-自行维护 DoKit 的 iOS 部分，致力于回归工具初心
+自行维护 DoraemonKit(DoKit) 的 iOS 部分，致力于回归工具初心
                        DESC
 
   s.homepage         = 'https://darkthanblack.github.io'
@@ -27,7 +20,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/darkThanBlack/DoKit-iOS.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '11.0'
 
   s.default_subspec = 'Core'
   s.pod_target_xcconfig = {
@@ -49,7 +42,7 @@ Pod::Spec.new do |s|
   end
   
 #  s.subspec 'CoreNG' do |ss|
-#    ss.dependency 'DoraemonKit/Foundation'
+#    ss.dependency 'DoKit/Foundation'
 #    ss.source_files = 'iOS/DoKit/Classes/Core/**/*.{h,m}'
 #    # language-extension-token warning be used to implement Objective-C typeof().
 #    # ?: grammar
@@ -68,7 +61,7 @@ Pod::Spec.new do |s|
     ss.source_files = 'iOS/DoKit/Classes/EventSynthesize/*.{h,m}'
     ss.compiler_flags = '-Wall', '-Wextra', '-Wpedantic', '-Werror', '-fvisibility=hidden', '-Wno-gnu-conditional-omitted-operand', '-Wno-pointer-arith'
     ss.framework = 'IOKit'
-    ss.dependency 'DoraemonKit/Foundation'
+    ss.dependency 'DoKit/Foundation'
   end
 
   s.subspec 'Core' do |ss| 
@@ -76,10 +69,6 @@ Pod::Spec.new do |s|
     ss.resource_bundle = {
       'DoraemonKit' => 'iOS/DoraemonKit/Resource/**/*'
     }
-#    ss.dependency 'GCDWebServer'
-#    ss.dependency 'GCDWebServer/WebUploader'
-#    ss.dependency 'GCDWebServer/WebDAV'
-#    ss.dependency 'FMDB'
   end
   
   s.subspec 'DiDi' do |ss|
@@ -88,75 +77,75 @@ Pod::Spec.new do |s|
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithDiDi'
     }
     
-    ss.dependency 'DoraemonKit/Core'
+    ss.dependency 'DoKit/Core'
     ss.dependency 'GCDWebServer'
     ss.dependency 'GCDWebServer/WebUploader'
     ss.dependency 'GCDWebServer/WebDAV'
     ss.dependency 'FMDB'
   end
 
-  s.subspec 'WithLogger' do |ss| 
+  s.subspec 'Logger' do |ss|
     ss.source_files = 'iOS/DoraemonKit/Src/Logger/**/*{.h,.m}'
     ss.pod_target_xcconfig = {
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithLogger'
     }
-    ss.dependency 'DoraemonKit/Core'
+    ss.dependency 'DoKit/Core'
     ss.dependency 'CocoaLumberjack'
   end
 
-  s.subspec 'WithGPS' do |ss| 
+  s.subspec 'GPS' do |ss|
     ss.source_files = 'iOS/DoraemonKit/Src/GPS/**/*{.h,.m}'
     ss.pod_target_xcconfig = {
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithGPS'
     }
-    ss.dependency 'DoraemonKit/Core'
+    ss.dependency 'DoKit/Core'
   end
 
-  s.subspec 'WithLoad' do |ss| 
+  s.subspec 'Load' do |ss|
     ss.source_files = 'iOS/DoraemonKit/Src/MethodUseTime/**/*{.h,.m}'
     ss.pod_target_xcconfig = {
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithLoad'
     }
-    ss.dependency 'DoraemonKit/Core'
+    ss.dependency 'DoKit/Core'
     # https://guides.cocoapods.org/syntax/podspec.html#vendored_frameworks
     # TODO(ChasonTang): Should change to vendored_framework?
     ss.vendored_frameworks = 'iOS/DoraemonKit/Framework/*.framework'
   end
 
-  s.subspec 'WithWeex' do |ss| 
+  s.subspec 'Weex' do |ss|
     ss.source_files = 'iOS/DoraemonKit/Src/Weex/**/*{.h,.m}'
     ss.pod_target_xcconfig = {
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithWeex'
     }
-    ss.dependency 'DoraemonKit/Core'
+    ss.dependency 'DoKit/Core'
     ss.dependency 'WeexSDK'
     ss.dependency 'WXDevtool'
   end
 
-  s.subspec 'WithDatabase' do |ss|
+  s.subspec 'Database' do |ss|
     ss.source_files = 'iOS/DoraemonKit/Src/Database/**/*{.h,.m}'
     ss.pod_target_xcconfig = {
         'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithDatabase'
     }
-    ss.dependency 'DoraemonKit/Core'
+    ss.dependency 'DoKit/Core'
     ss.dependency 'YYDebugDatabase'
   end
 
-  s.subspec 'WithMLeaksFinder' do |ss|
+  s.subspec 'MLeaksFinder' do |ss|
     ss.source_files = 'iOS/DoraemonKit/Src/MLeaksFinder/**/*{.h,.m}'
     ss.pod_target_xcconfig = {
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithMLeaksFinder'
     }
-    ss.dependency 'DoraemonKit/Core'
+    ss.dependency 'DoKit/Core'
     ss.dependency 'FBRetainCycleDetector'
   end
 
-  s.subspec 'WithMultiControl' do |ss|
+  s.subspec 'MultiControl' do |ss|
     ss.source_files = 'iOS/DoraemonKit/Src/MultiControl/**/*{.h,.m}'
     ss.pod_target_xcconfig = {
       'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) DoraemonWithMultiControl'
     }
-    ss.dependency 'DoraemonKit/Core'
-    ss.dependency 'DoraemonKit/Foundation'
+    ss.dependency 'DoKit/Core'
+    ss.dependency 'DoKit/Foundation'
   end
 end

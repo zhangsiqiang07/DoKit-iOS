@@ -8,7 +8,7 @@
 #import <UIKit/UIKit.h>
 #import "DoraemonPluginProtocol.h"
 
-@interface DoraemonMultiControlPlugin : NSObject
+@interface DoraemonMultiControlPlugin : NSObject<DoraemonPluginProtocol>
 
 @end
 

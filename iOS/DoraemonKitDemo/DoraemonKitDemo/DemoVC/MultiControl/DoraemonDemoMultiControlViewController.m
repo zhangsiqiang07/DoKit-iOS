@@ -15,13 +15,15 @@
 #import "DoraemonDemoMultiConSwipeGesture.h"
 #import "DoraemonDemoMultiConTapGesture.h"
 #import "DoraemonDemoMultiConScreenEdgePanGesture.h"
-#import "DoraemonMCCommandExcutor.h"
-#import "DoraemonMCMessagePackager.h"
 #import "DoraemonDemoMultiSlideView.h"
 
 #if DoraemonWithDiDi
 #import "DoraemonHealthAlertView.h"
 #endif
+
+#if DoraemonWithMultiControl
+#import "DoraemonMCCommandExcutor.h"
+#import "DoraemonMCMessagePackager.h"
 
 @interface DoraemonMCEventHandler1: DoraemonMCEventHandler
 
@@ -69,6 +71,7 @@
 
 @end
 
+#endif
 
 @interface DoraemonDemoMultiControlViewController ()
 @property (nonatomic,strong) UIScrollView * superScrollView;
@@ -106,6 +109,7 @@
     [btn_3 addTarget:self action:@selector(controlEvent3) forControlEvents:UIControlEventTouchUpInside];
     [self.superScrollView addSubview:btn_3];
 
+#if DoraemonWithMultiControl
     // 自定义事件
     DoraemonMCEventHandler1 *customHandler1 = [DoraemonMCEventHandler1 new];
     [DoraemonMCCommandExcutor addCustomMessage:@"customType1" eventHandlerName:customHandler1];
@@ -113,7 +117,7 @@
     
     DoraemonMCEventHandler2 *customHandler2 = [DoraemonMCEventHandler2 new];
     [DoraemonMCCommandExcutor addCustomMessage:@"customType2" eventHandlerName:customHandler2];
-    
+#endif
     
     DoraemonDemoMultiSlideView  *slideView  = [[DoraemonDemoMultiSlideView alloc]initWithFrame:CGRectMake(30, btn_3.doraemon_bottom +20, btn_3.doraemon_width-60, 60)];
     [self.superScrollView addSubview:slideView];

@@ -222,19 +222,24 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
  初始化内置工具数据
  */
 - (void)initData{
-    #pragma mark - 平台工具
+#pragma mark - 平台工具
+#if DoraemonWithDiDi
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonMockPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonHealthPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonFileSyncPlugin];
+#endif
+#if DoraemonWithMultiControl
+    [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonMultiControlPlugin];
+#endif
     
-    #pragma mark - 常用工具
+#pragma mark - 常用工具
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonAppSettingPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonAppInfoPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonSandboxPlugin];
 #if DoraemonWithGPS
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonGPSPlugin];
 #endif
-
+    
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonH5Plugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonDeleteLocalDataPlugin];
     
@@ -249,7 +254,7 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
 #endif
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonJavaScriptPlugin];
     
-    #pragma mark - 性能检测
+#pragma mark - 性能检测
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonFPSPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonCPUPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonMemoryPlugin];
@@ -269,20 +274,20 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonMemoryLeakPlugin];
 #endif
     
-    #pragma mark - 视觉工具
+#pragma mark - 视觉工具
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonColorPickPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonViewCheckPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonViewAlignPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonViewMetricsPlugin];
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonHierarchyPlugin];
     
-    #pragma mark - Weex专项工具
-    #if DoraemonWithWeex
-        [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexLogPlugin];
-        [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexStoragePlugin];
-        [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexInfoPlugin];
-        [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexDevToolPlugin];
-    #endif
+#pragma mark - Weex专项工具
+#if DoraemonWithWeex
+    [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexLogPlugin];
+    [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexStoragePlugin];
+    [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexInfoPlugin];
+    [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonWeexDevToolPlugin];
+#endif
 }
 
 /**
@@ -677,7 +682,7 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
                                    ],
                            @(DoraemonManagerPluginType_DoraemonUIProfilePlugin) : @[
                                    @{kTitle:DoraemonLocalizedString(@"UI层级")},
-                                   @{kDesc:DoraemonLocalizedString(@"UI层级s")},
+                                   @{kDesc:DoraemonLocalizedString(@"UI层级")},
                                    @{kIcon:@"doraemon_view_level"},
                                    @{kPluginName:@"DoraemonUIProfilePlugin"},
                                    @{kAtModule:DoraemonLocalizedString(@"性能检测")},
@@ -764,7 +769,15 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
                                     @{kPluginName:@"DoraemonFileSyncPlugin"},
                                     @{kAtModule:DoraemonLocalizedString(@"平台工具")},
                                     @{kBuriedPoint:@"dokit_sdk_platform_ck_filesync"}
-                                    ]
+                                    ],
+                           @(DoraemonManagerPluginType_DoraemonMultiControlPlugin) : @[
+                               @{kTitle:DoraemonLocalizedString(@"一机多控")},
+                                  @{kDesc:DoraemonLocalizedString(@"一机多控")},
+                                  @{kIcon:@"dk_icon_mc"},
+                                  @{kPluginName:@"DoraemonMultiControlPlugin"},
+                                  @{kAtModule:DoraemonLocalizedString(@"平台工具")},
+                                  @{kBuriedPoint:@"dokit_sdk_platform_ck_multi_control"}
+                                  ]
                            }[@(pluginType)];
     
     DoraemonManagerPluginTypeModel *model = [DoraemonManagerPluginTypeModel new];

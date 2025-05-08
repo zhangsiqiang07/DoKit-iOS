@@ -8,7 +8,11 @@
 
 #import "DoraemonDemoMultiSlideView.h"
 #import <Masonry/Masonry.h>
+
+#if DoraemonWithMultiControl
 #import "DoraemonMCCommandGenerator.h"
+#endif
+
 typedef void(^CommonActionBlock)(id);
 @interface DoraemonDemoMultiSlideView ()<UIGestureRecognizerDelegate>
 
@@ -98,7 +102,9 @@ typedef void(^CommonActionBlock)(id);
         _lbLockName.hidden = YES;
     }else if(panGestureRecognizer.state == UIGestureRecognizerStateChanged){
         if (translation.x == 1) {
+#if DoraemonWithMultiControl
             [DoraemonMCCommandGenerator sendCustomMessageWithView:self eventInfo:@{@"eventInfo":@"customType1"} messageType:@"customType1"];
+#endif
         }
         if(translation.x > 0){
             _lbLockName.hidden = YES;
@@ -115,7 +121,9 @@ typedef void(^CommonActionBlock)(id);
         }
     }else if(panGestureRecognizer.state == UIGestureRecognizerStateEnded || panGestureRecognizer.state == UIGestureRecognizerStateCancelled){
         if(panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+#if DoraemonWithMultiControl
             [DoraemonMCCommandGenerator sendCustomMessageWithView:self eventInfo:@{@"eventInfo":@"customType2"} messageType:@"customType2"];
+#endif
         }
         if(translation.x > _fMaxSlideValue * self.nUnlockScale/100.0){
             [_slideView mas_remakeConstraints:^(MASConstraintMaker *make) {

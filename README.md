@@ -25,14 +25,21 @@ DoKit 前身为 DoraemonKit，原为偏重于 iOS 的移动端位本地调试工
 
 ```ruby
 # Podfile
-pod 'DoKit/Core', '3.0.4', :configurations => ['Debug']
+pod 'DoKit', :subspecs => ['Core'], :git => 'ssh://git@github.com:darkThanBlack/DoKit-iOS.git', :branch => 'master', :configurations => ['Debug']
 ```
 
-注意，根据 [官方文档](https://guides.cocoapods.org/syntax/podfile.html#pod) 中 ``Build configurations`` 这一小节，pod 的 configurations 不会对依赖项生效，需要手动一一指明。
+注意，根据 [官方文档](https://guides.cocoapods.org/syntax/podfile.html#pod) 中 ``Build configurations`` 这一小节，pod 的 configurations 不会对依赖项生效，需要手动一一指明，这里仅用无依赖的 core 作为例子。
 
 
 
 ## Feature
+
+
+
+#### 更名
+
+* [x] 将 pod 的名字从 ``DoraemonKit`` 更换为 ``DoKit``，删除子仓库名字的 ``With`` 前缀
+* [ ] 工程中已经有名为 DoKit 的目录文件夹和一些代码，应当是想要逐渐从原目录重构过去，但尚未开发完整，需要甄别并合并掉
 
 
 
@@ -54,9 +61,12 @@ pod 'DoKit/Core', '3.0.4', :configurations => ['Debug']
 
 * [x] 删除非 iOS 端位相关内容
 
-* [ ] 分离滴滴平台相关代码，单独作为一个 subspec
+* [x] 分离滴滴平台相关代码，单独作为一个 subspec
 
   > 平台相关代码会引用 GCDWebServer 和 FMDB 依赖用来构建本地服务，一般仓库不仅没必要引入，还容易因为 Podfile 写得不完备导致被带到线上去。
+
+  * [x] 一机多控的 Plugin 是通过 load 加载的，统一成宏判断的形式，和其他插件保持一致
+
 
 
 
