@@ -10,7 +10,6 @@
 #import "DoraemonDefine.h"
 #import "DoraemonDemoImageShowViewController.h"
 #import <SDWebImage/SDWebImageManager.h>
-#import "DoraemonUIWebViewViewController.h"
 #import "DoraemonWKWebViewViewController.h"
 
 @interface DoraemonDemoImageViewController ()
@@ -39,13 +38,7 @@
     [btn1 addTarget:self action:@selector(sdWebImage) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn1];
     
-    UIButton *btn2 = [[UIButton alloc] initWithFrame:CGRectMake(0, btn1.doraemon_bottom+20, self.view.doraemon_width, 60)];
-    btn2.backgroundColor = [UIColor orangeColor];
-    [btn2 setTitle:DoraemonDemoLocalizedString(@"uiWebView") forState:UIControlStateNormal];
-    [btn2 addTarget:self action:@selector(uiWebView) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn2];
-    
-    UIButton *btn3 = [[UIButton alloc] initWithFrame:CGRectMake(0, btn2.doraemon_bottom+20, self.view.doraemon_width, 60)];
+    UIButton *btn3 = [[UIButton alloc] initWithFrame:CGRectMake(0, btn1.doraemon_bottom+20, self.view.doraemon_width, 60)];
     btn3.backgroundColor = [UIColor orangeColor];
     [btn3 setTitle:DoraemonDemoLocalizedString(@"wkWebView") forState:UIControlStateNormal];
     [btn3 addTarget:self action:@selector(wkWebView) forControlEvents:UIControlEventTouchUpInside];
@@ -71,11 +64,6 @@
         //
         [self showImage:image];
     }];
-}
-
-- (void)uiWebView{
-    UIViewController *vc = [[DoraemonUIWebViewViewController alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)wkWebView{

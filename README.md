@@ -73,6 +73,14 @@ DoKit 前身为 DoraemonKit，原为偏重于 iOS 的移动端位本地调试工
 
 
 
+#### 旧 API
+
+* [x] 删除 ``UIWebView`` 相关代码
+
+  > 存在部分执意将该工具发布到线上的开发者，确保 API 使用同时符合 AppStore 机审标准。
+
+
+
 
 #### 适配：Xcode16.3, iOS18
 

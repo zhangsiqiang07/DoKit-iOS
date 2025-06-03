@@ -11,7 +11,6 @@
 #import <AFNetworking/AFNetworking.h>
 #import <DoKit/DoraemonNSURLProtocol.h>
 #import "DoraemonDefine.h"
-#import "DoraemonUIWebViewViewController.h"
 #import "DoraemonWKWebViewViewController.h"
 #import "DoraemonDemoImageViewController.h"
 #import <DoKit/DoraemonNetworkUtil.h>
@@ -51,7 +50,7 @@
         @"发送一条NSURLSession请求",
         @"发送一条AFNetworking请求",
         @"发送一条AFNetworking请求2",
-        @"打开UIWebView",
+        @"[DEPRESSED] 打开UIWebView",
         @"打开WKWebView",
         @"图片测试",
         @"Mock测试",
@@ -122,7 +121,6 @@
             [self netForAFNetworking2];
             break;
         case 4:
-            [self openUIWebView];
             break;
         case 5:
             [self openWKWebView];
@@ -140,12 +138,6 @@
         default:
             break;
     }
-}
-
-
-- (void)openUIWebView{
-    UIViewController *vc = [[DoraemonUIWebViewViewController alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)openWKWebView{
