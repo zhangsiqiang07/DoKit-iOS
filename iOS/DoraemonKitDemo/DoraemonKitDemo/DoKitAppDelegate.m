@@ -49,6 +49,8 @@
     
     [[DoraemonManager shareInstance] addPluginWithTitle:@"自定图标" image:[UIImage imageNamed:@"zhaoliyin"] desc:@"自定义图标" pluginName:@"自定图标" atModule:DoraemonDemoLocalizedString(@"业务工具") handle:nil];
 
+    [[DoraemonManager shareInstance] addPluginWithTitle:@"自定图标" image:[UIImage imageNamed:@"zhaoliyin"] desc:@"自定义图标" pluginName:@"自定图标" atModule:@"Module2" handle:nil];
+    
     //测试 a49842eeebeb1989b3f9565eb12c276b
     //线上 749a0600b5e48dd77cf8ee680be7b1b7
     //[DoraemonManager shareInstance].pId = @"749a0600b5e48dd77cf8ee680be7b1b7";

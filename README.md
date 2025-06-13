@@ -92,7 +92,7 @@ DoKit 前身为 DoraemonKit，原为偏重于 iOS 的移动端位本地调试工
 
 * [x] 功能：UI 结构失效，参考 [issue-1065](https://github.com/didi/DoKit/issues/1065) 的 [评论](https://github.com/didi/DoKit/issues/1065#issuecomment-1765564254)
 
-
+* [x] 自定义功能入口，当添加多个分组（Module）时，新安装的 APP 只显示最后添加的
 
 
 

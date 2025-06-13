@@ -51,11 +51,15 @@ static NSString *DoraemonHomeCloseCellID = @"DoraemonHomeCloseCellID";
 #if defined(__IPHONE_13_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0)
     }
 #endif
-    NSMutableArray *dataArray = [[DoraemonCacheManager sharedInstance] allKitShowManagerData];
-    _dataArray = dataArray;
     [self.view addSubview:self.collectionView];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(kitManagerUpdate:) name:DoraemonKitManagerUpdateNotification object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self reloadData];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -70,12 +74,16 @@ static NSString *DoraemonHomeCloseCellID = @"DoraemonHomeCloseCellID";
 }
 
 - (void)kitManagerUpdate:(NSNotification *)aNotification {
-    _dataArray = [[DoraemonCacheManager sharedInstance] allKitShowManagerData];
-    [self.collectionView reloadData];
+    [self reloadData];
 }
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)reloadData{
+    _dataArray = [[DoraemonCacheManager sharedInstance] allKitShowManagerData];
+    [self.collectionView reloadData];
 }
 
 #pragma mark -- UICollectionView
