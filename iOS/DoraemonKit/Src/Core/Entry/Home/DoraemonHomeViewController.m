@@ -37,7 +37,7 @@ static NSString *DoraemonHomeCloseCellID = @"DoraemonHomeCloseCellID";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"DoKit";
+    self.title = @"DoooooooKit";
     [self setLeftNavBarItems:nil];
     [self setRightNavTitle:DoraemonLocalizedString(@"设置")];
     
