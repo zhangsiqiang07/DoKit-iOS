@@ -18,7 +18,7 @@
 #import "DoraemonHomeCloseCell.h"
 #import "UIViewController+Doraemon.h"
 #import "DoraemonBuriedPointManager.h"
-#import "DoraemonSettingViewController.h"
+#import "DoraemonKitManagerViewController.h"
 #import "DoraemonCacheManager.h"
 
 static NSString *DoraemonHomeCellID = @"DoraemonHomeCellID";
@@ -69,7 +69,7 @@ static NSString *DoraemonHomeCloseCellID = @"DoraemonHomeCloseCellID";
 }
 
 - (void)rightNavTitleClick:(id)clickView{
-    DoraemonSettingViewController *vc = [[DoraemonSettingViewController alloc] init];
+    DoraemonKitManagerViewController *vc = [[DoraemonKitManagerViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
