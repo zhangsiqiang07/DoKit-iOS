@@ -163,7 +163,7 @@ static NSString *const scanLineAnimationName = @"scanLineAnimation";
 
 - (void)setupViews{
     [self addSubview:self.middleView];
-    [self addSubview:self.maskView];
+    // [self addSubview:self.maskView];
     [self.middleView addSubview:self.scanLine];
     if (self.isShowCornerLine) {
         [self addCornerLines];
