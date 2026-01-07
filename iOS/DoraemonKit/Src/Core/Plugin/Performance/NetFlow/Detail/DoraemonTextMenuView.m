@@ -28,7 +28,7 @@
     }
     
     // 设置菜单位置
-    CGFloat menuWidth = 120;
+    CGFloat menuWidth = 140;
     CGFloat menuHeight = 88;
     CGFloat padding = 8;
     
@@ -112,7 +112,7 @@
     
     // 全选按钮
     _selectAllButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_selectAllButton setTitle:@"全选" forState:UIControlStateNormal];
+    [_selectAllButton setTitle:@"全选并复制" forState:UIControlStateNormal];
     [_selectAllButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     _selectAllButton.titleLabel.font = [UIFont systemFontOfSize:16];
     _selectAllButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;

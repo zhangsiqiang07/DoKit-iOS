@@ -16,15 +16,114 @@
     }
     NSString *jsonString = nil;
     
-    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-    if ([NSJSONSerialization isValidJSONObject:jsonObject]) {
-        jsonString = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:jsonObject options:NSJSONWritingPrettyPrinted error:NULL] encoding:NSUTF8StringEncoding];
-        // NSJSONSerialization escapes forward slashes. We want pretty json, so run through and unescape the slashes.
-        jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
+    // 先尝试直接读取为字符串，这样可以保持原始 JSON 中的浮点数精度
+    NSString *originalString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (originalString) {
+        // 验证是否是有效的 JSON（通过尝试解析，但不使用解析结果）
+        NSError *parseError = nil;
+        id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
+        if (jsonObject && !parseError) {
+            // 是有效的 JSON，直接美化原始字符串，保持所有数字的原始精度
+            jsonString = [self prettyPrintJSON:originalString];
+        } else {
+            // 不是有效的 JSON，直接返回原始字符串
+            jsonString = originalString;
+        }
     } else {
-        jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        // 无法解析为 UTF-8 字符串，尝试使用 NSJSONSerialization（会丢失精度，但至少能显示）
+        id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+        if ([NSJSONSerialization isValidJSONObject:jsonObject]) {
+            jsonString = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:jsonObject options:NSJSONWritingPrettyPrinted error:NULL] encoding:NSUTF8StringEncoding];
+            // NSJSONSerialization escapes forward slashes. We want pretty json, so run through and unescape the slashes.
+            jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
+        } else {
+            jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        }
     }
     return jsonString;
+}
+
+// 美化 JSON 字符串，保持原始数字精度（不重新解析）
++ (NSString *)prettyPrintJSON:(NSString *)jsonString {
+    if (!jsonString) {
+        return nil;
+    }
+    
+    // 移除首尾空白
+    NSString *trimmed = [jsonString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSMutableString *result = [NSMutableString string];
+    NSInteger indentLevel = 0;
+    NSInteger length = trimmed.length;
+    BOOL inString = NO;
+    BOOL escapeNext = NO;
+    
+    for (NSInteger i = 0; i < length; i++) {
+        unichar c = [trimmed characterAtIndex:i];
+        
+        if (escapeNext) {
+            [result appendFormat:@"%C", c];
+            escapeNext = NO;
+            continue;
+        }
+        
+        if (c == '\\') {
+            [result appendFormat:@"%C", c];
+            escapeNext = YES;
+            continue;
+        }
+        
+        if (c == '"') {
+            [result appendFormat:@"%C", c];
+            inString = !inString;
+            continue;
+        }
+        
+        if (inString) {
+            // 在字符串内，直接追加
+            [result appendFormat:@"%C", c];
+        } else {
+            // 在字符串外，处理格式化
+            switch (c) {
+                case '{':
+                case '[':
+                    [result appendFormat:@"%C\n", c];
+                    indentLevel++;
+                    [result appendString:[self indentString:indentLevel]];
+                    break;
+                case '}':
+                case ']':
+                    indentLevel--;
+                    [result appendString:@"\n"];
+                    [result appendString:[self indentString:indentLevel]];
+                    [result appendFormat:@"%C", c];
+                    break;
+                case ',':
+                    [result appendFormat:@"%C\n", c];
+                    [result appendString:[self indentString:indentLevel]];
+                    break;
+                case ':':
+                    [result appendFormat:@"%C ", c];
+                    break;
+                case ' ':
+                case '\n':
+                case '\r':
+                case '\t':
+                    // 忽略空白字符（我们会在需要的地方添加）
+                    break;
+                default:
+                    [result appendFormat:@"%C", c];
+                    break;
+            }
+        }
+    }
+    
+    return result;
+}
+
+// 生成缩进字符串
++ (NSString *)indentString:(NSInteger)level {
+    return [@"" stringByPaddingToLength:level * 2 withString:@" " startingAtIndex:0];
 }
 
 + (NSDictionary *)convertDicFromData:(NSData *)data{

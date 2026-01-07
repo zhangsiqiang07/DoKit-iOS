@@ -108,6 +108,8 @@
 
 - (void)textMenuViewDidSelectSelectAll:(DoraemonTextMenuView *)menuView {
     [self selectAll:nil];
+    // 全选后自动复制
+    [self copy:nil];
 }
 
 - (void)dealloc {
