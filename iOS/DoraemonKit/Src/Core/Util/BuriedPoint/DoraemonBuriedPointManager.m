@@ -70,34 +70,13 @@
 }
 
 - (void)addPointName:(NSString *)name{
-    if (name.length<1) {
-        return;
-    }
-    NSDictionary *dic = @{
-        @"eventName":STRING_NOT_NULL(name),
-        @"time":[DoraemonUtil currentTimeInterval]
-    };
-    [self.pointArray addObject:dic];
-    
-    if([self needUpload]){
-        [self uploadData];
-    }
+    // 已禁用埋点上报功能，已移除对 www.dokit.cn/pointData/addPointData 的调用
+    return;
 }
 
 - (void)uploadData{
-    if(self.pointArray.count > 0){
-        [self.basicInfoDic setValue:self.pointArray forKey:@"events"];
-        NSMutableDictionary *params = [self.basicInfoDic copy];
-
-        [DoraemonNetworkUtil postWithUrlString:@"https://www.dokit.cn/pointData/addPointData" params:params success:^(NSDictionary * _Nonnull result) {
-            NSInteger code = [result[@"code"] integerValue];
-            if (code == 200) {
-                [self removePointArray];
-            }
-        } error:^(NSError * _Nonnull error){
-            
-        }];
-    }
+    // 已禁用埋点数据上报功能，已移除对 www.dokit.cn/pointData/addPointData 的调用
+    return;
 }
 
 
@@ -128,7 +107,8 @@
 
 //3、app 切换到后台时 上传
 - (void)appWillEnterBackgroundNotification:(UIApplication *)application{
-    [self uploadData];
+    // 已禁用埋点数据上报功能，已移除对 www.dokit.cn/pointData/addPointData 的调用
+    // [self uploadData];
 }
 
 

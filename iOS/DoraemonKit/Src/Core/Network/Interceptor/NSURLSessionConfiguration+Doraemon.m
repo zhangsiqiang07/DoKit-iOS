@@ -15,6 +15,7 @@
 @implementation NSURLSessionConfiguration (Doraemon)
 
 + (void)load{
+    // 保留网络拦截功能，仅禁用上报逻辑
     [[self class] doraemon_swizzleClassMethodWithOriginSel:@selector(defaultSessionConfiguration) swizzledSel:@selector(doraemon_defaultSessionConfiguration)];
     [[self class] doraemon_swizzleClassMethodWithOriginSel:@selector(ephemeralSessionConfiguration) swizzledSel:@selector(doraemon_ephemeralSessionConfiguration)];
 }
@@ -34,11 +35,17 @@
 - (void)addDoraemonNSURLProtocol {
     if ([self respondsToSelector:@selector(protocolClasses)]
         && [self respondsToSelector:@selector(setProtocolClasses:)]) {
-        NSMutableArray * urlProtocolClasses = [NSMutableArray arrayWithArray: self.protocolClasses];
+        // 确保 protocolClasses 不为 nil，初始化为空数组
+        NSMutableArray * urlProtocolClasses = [NSMutableArray arrayWithArray: self.protocolClasses ?: @[]];
         Class protoCls = DoraemonNSURLProtocol.class;
-        if (![urlProtocolClasses containsObject:protoCls]) {
-            [urlProtocolClasses insertObject:protoCls atIndex:0];
+        
+        // 如果已存在，先移除（确保重新插入到第一位，保证优先级最高）
+        if ([urlProtocolClasses containsObject:protoCls]) {
+            [urlProtocolClasses removeObject:protoCls];
         }
+        
+        // 插入到第一位（确保优先级最高）
+        [urlProtocolClasses insertObject:protoCls atIndex:0];
         self.protocolClasses = urlProtocolClasses;
     }
 }

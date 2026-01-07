@@ -20,6 +20,10 @@
 }
 
 - (void)upLoadUserInfo{
+    // 已禁用用户信息上报功能
+    return;
+    
+    /*
     if (_noUpLoad) {
         return;
     }
@@ -59,6 +63,7 @@
 //        }
     }];
     [task resume];
+    */
 }
 
 @end

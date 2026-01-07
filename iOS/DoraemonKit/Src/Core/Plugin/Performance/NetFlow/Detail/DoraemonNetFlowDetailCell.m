@@ -8,8 +8,9 @@
 #import "DoraemonNetFlowDetailCell.h"
 #import "DoraemonDefine.h"
 #import "UIColor+Doraemon.h"
+#import "DoraemonSelectableTextView.h"
 
-@interface DoraemonNetFlowDetailCell()
+@interface DoraemonNetFlowDetailCell()<UITextViewDelegate>
 
 @property (nonatomic, strong) UITextView *contentLabel;
 @property (nonatomic, strong) UIView *upLine;
@@ -39,7 +40,15 @@
         }
 #endif
         _contentLabel.editable = NO;
+        _contentLabel.selectable = YES; // 启用文本选择，支持长按全选、复制等功能
+        _contentLabel.userInteractionEnabled = YES; // 确保用户交互可用
+        _contentLabel.delegate = self; // 设置代理以支持菜单功能
+        // 确保 UITextView 不会拦截 UITableView 的滚动事件
+        // 当 scrollEnabled = NO 时，UITextView 会自动让滚动事件传递给 UITableView
         [self.contentView addSubview:_contentLabel];
+        
+        // 确保 Cell 可以响应菜单操作
+        self.userInteractionEnabled = YES;
         
         _upLine = [[UIView alloc] init];
         _upLine.backgroundColor = [UIColor doraemon_colorWithHex:0xF2F2F2];
@@ -56,50 +65,108 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    // 禁用 UITextView 滑动，解决其与 UITableView 的滑动冲突；
-    // 放这里调用是因为在其他地方调用会出现文本未显示的问题(模拟器环境下)
-    _contentLabel.scrollEnabled = false;
-}
-
-- (void)renderUIWithContent:(NSString *)content isFirst:(BOOL)isFirst isLast:(BOOL)isLast{
-    _contentLabel.text = content;
-    CGSize fontSize = [_contentLabel sizeThatFits:CGSizeMake(DoraemonScreenWidth-kDoraemonSizeFrom750_Landscape(32)*2, MAXFLOAT)];
-    _contentLabel.frame = CGRectMake(kDoraemonSizeFrom750_Landscape(32), kDoraemonSizeFrom750_Landscape(28), fontSize.width, fontSize.height);
-    
-    CGFloat cellHeight = [[self class] cellHeightWithContent:content];
-    if(isFirst && isLast){
-        _upLine.hidden = NO;
-        _upLine.frame = CGRectMake(0, 0, DoraemonScreenWidth, 0.5);
-        _downLine.hidden = NO;
-        _downLine.frame = CGRectMake(0, cellHeight-0.5, DoraemonScreenWidth, 0.5);
-    }else if(isFirst && !isLast){
-        _upLine.hidden = NO;
-        _upLine.frame = CGRectMake(0, 0, DoraemonScreenWidth, 0.5);
-        _downLine.hidden = NO;
-        _downLine.frame = CGRectMake(20, cellHeight-0.5, DoraemonScreenWidth-20, 0.5);
-    }else if(!isFirst && isLast){
-        _upLine.hidden = YES;
-        _downLine.hidden = NO;
-        _downLine.frame = CGRectMake(0, cellHeight-0.5, DoraemonScreenWidth, 0.5);
-    }else{
-        _upLine.hidden = YES;
-        _downLine.hidden = NO;
-        _downLine.frame = CGRectMake(20, cellHeight-0.5, DoraemonScreenWidth-20, 0.5);
+    // 确保 frame 正确，避免内容被截断
+    CGFloat cellWidth = DoraemonScreenWidth - kDoraemonSizeFrom750_Landscape(32) * 2;
+    if (self->_contentLabel.frame.size.width != cellWidth) {
+        CGRect frame = self->_contentLabel.frame;
+        frame.size.width = cellWidth;
+        self->_contentLabel.frame = frame;
     }
 }
 
+- (void)renderUIWithContent:(NSString *)content isFirst:(BOOL)isFirst isLast:(BOOL)isLast{
+    CGFloat cellWidth = DoraemonScreenWidth - kDoraemonSizeFrom750_Landscape(32) * 2;
+    
+    // 使用 performWithoutAnimation 减少动画开销
+    [UIView performWithoutAnimation:^{
+        self->_contentLabel.text = content;
+        
+        // 计算高度（始终禁用滚动，避免与 UITableView 冲突）
+        self->_contentLabel.scrollEnabled = NO;
+        CGSize fontSize = [self->_contentLabel sizeThatFits:CGSizeMake(cellWidth, MAXFLOAT)];
+        self->_contentLabel.frame = CGRectMake(kDoraemonSizeFrom750_Landscape(32), kDoraemonSizeFrom750_Landscape(28), cellWidth, fontSize.height);
+        
+        CGFloat cellHeight = fontSize.height + kDoraemonSizeFrom750_Landscape(28) * 2;
+        
+        // 更新分割线
+        if(isFirst && isLast){
+            self->_upLine.hidden = NO;
+            self->_upLine.frame = CGRectMake(0, 0, DoraemonScreenWidth, 0.5);
+            self->_downLine.hidden = NO;
+            self->_downLine.frame = CGRectMake(0, cellHeight-0.5, DoraemonScreenWidth, 0.5);
+        }else if(isFirst && !isLast){
+            self->_upLine.hidden = NO;
+            self->_upLine.frame = CGRectMake(0, 0, DoraemonScreenWidth, 0.5);
+            self->_downLine.hidden = NO;
+            self->_downLine.frame = CGRectMake(20, cellHeight-0.5, DoraemonScreenWidth-20, 0.5);
+        }else if(!isFirst && isLast){
+            self->_upLine.hidden = YES;
+            self->_downLine.hidden = NO;
+            self->_downLine.frame = CGRectMake(0, cellHeight-0.5, DoraemonScreenWidth, 0.5);
+        }else{
+            self->_upLine.hidden = YES;
+            self->_downLine.hidden = NO;
+            self->_downLine.frame = CGRectMake(20, cellHeight-0.5, DoraemonScreenWidth-20, 0.5);
+        }
+    }];
+}
+
 + (CGFloat)cellHeightWithContent:(NSString *)content{
+    // 对于超大文本，使用快速估算避免创建完整的 UITextView
+    if (content.length > 50000) {
+        // 使用简单的行数估算
+        CGFloat estimatedLineHeight = 20.0; // 大约的行高
+        NSInteger lineCount = (NSInteger)(content.length / 50.0); // 粗略估算行数
+        CGFloat estimatedHeight = lineCount * estimatedLineHeight;
+        return estimatedHeight + kDoraemonSizeFrom750_Landscape(28) * 2;
+    }
+    
     UITextView *tempLabel = [DoraemonNetFlowDetailCell genTextView:16.0];
     tempLabel.text = content;
     CGSize fontSize = [tempLabel sizeThatFits:CGSizeMake(DoraemonScreenWidth-2*kDoraemonSizeFrom750_Landscape(32), MAXFLOAT)];
-    return fontSize.height+kDoraemonSizeFrom750_Landscape(28)*2;
+    
+    return fontSize.height + kDoraemonSizeFrom750_Landscape(28) * 2;
 }
 
 /// 生成 UITextView
 + (UITextView *)genTextView:(CGFloat)fontSize {
-    UITextView *tempTextView = [[UITextView alloc] init];
+    UITextView *tempTextView = [[DoraemonSelectableTextView alloc] init];
     tempTextView.font = [UIFont systemFontOfSize:fontSize];
+    // 性能优化：禁用不必要的特性
+    tempTextView.textContainerInset = UIEdgeInsetsZero;
+    tempTextView.textContainer.lineFragmentPadding = 0;
+    tempTextView.layoutManager.allowsNonContiguousLayout = YES; // 允许非连续布局，提升大文本性能
+    tempTextView.textContainer.maximumNumberOfLines = 0;
+    tempTextView.textContainer.lineBreakMode = NSLineBreakByWordWrapping;
+    // 启用文本选择功能，支持长按全选、复制等系统功能
+    tempTextView.editable = NO;
+    tempTextView.selectable = YES;
+    tempTextView.userInteractionEnabled = YES;
     return tempTextView;
+}
+
+#pragma mark - UITextViewDelegate
+// 确保菜单可以显示
+- (BOOL)textView:(UITextView *)textView shouldInteractWithTextAttachment:(NSTextAttachment *)textAttachment inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+    return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+    return YES;
+}
+
+// 当 UITextView 选择文本时，确保菜单可以显示
+- (void)textViewDidChangeSelection:(UITextView *)textView {
+    // 如果是 DoraemonSelectableTextView，调用其菜单显示方法
+    if ([textView isKindOfClass:[DoraemonSelectableTextView class]]) {
+        DoraemonSelectableTextView *selectableTextView = (DoraemonSelectableTextView *)textView;
+        [selectableTextView showMenuIfNeeded];
+    } else {
+        // 其他情况，确保 UITextView 可以成为第一响应者
+        if (textView.selectedRange.length > 0 && ![textView isFirstResponder]) {
+            [textView becomeFirstResponder];
+        }
+    }
 }
 
 @end

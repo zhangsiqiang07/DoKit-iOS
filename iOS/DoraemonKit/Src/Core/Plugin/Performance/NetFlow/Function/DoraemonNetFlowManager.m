@@ -145,6 +145,7 @@
 
 #pragma mark -- DoraemonNetworkInterceptorDelegate
 - (void)doraemonNetworkInterceptorDidReceiveData:(NSData *)data response:(NSURLResponse *)response request:(NSURLRequest *)request error:(NSError *)error startTime:(NSTimeInterval)startTime {
+    // 保留本地数据收集，禁用服务器上报
     [DoraemonNetFlowHttpModel dealWithResponseData:data response:response request:request complete:^(DoraemonNetFlowHttpModel *httpModel) {
         if (!response) {
             httpModel.statusCode = error.localizedDescription;
@@ -155,9 +156,12 @@
         httpModel.totalDuration = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970] - startTime];
         httpModel.topVc = NSStringFromClass([[UIViewController topViewControllerForKeyWindow] class]);
         
+        // 保留本地数据收集，用于 DoKit 界面展示
         [[DoraemonNetFlowDataSource shareInstance] addHttpModel:httpModel];
+        
+        // 已禁用服务器上报功能
 #if DoraemonWithDiDi
-        [[DoraemonHealthManager sharedInstance] addHttpModel:httpModel];
+        // [[DoraemonHealthManager sharedInstance] addHttpModel:httpModel];
 #endif
     }];
 }

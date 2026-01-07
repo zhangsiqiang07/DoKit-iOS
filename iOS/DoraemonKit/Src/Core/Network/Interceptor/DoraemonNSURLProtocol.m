@@ -55,25 +55,59 @@ static NSString * const kDoraemonProtocolKey = @"doraemon_protocol_key";
 }
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request{
+    NSString *urlString = request.URL.absoluteString ?: @"";
+    NSString *method = request.HTTPMethod ?: @"GET";
+    BOOL isHistoryList = [urlString containsString:@"historyList"] || [urlString containsString:@"petVoice/historyList"];
+    
+    // 调试日志：特别关注 historyList 请求
+    if (isHistoryList) {
+        DoKitLog(@"🔍 [DoraemonNSURLProtocol] ========== historyList 请求检测开始 ==========");
+        DoKitLog(@"🔍 [DoraemonNSURLProtocol] URL: %@", urlString);
+        DoKitLog(@"🔍 [DoraemonNSURLProtocol] Method: %@", method);
+        DoKitLog(@"🔍 [DoraemonNSURLProtocol] Headers: %@", request.allHTTPHeaderFields ?: @{});
+    }
+    
+    // 检查是否已被标记（避免循环拦截）
     if ([NSURLProtocol propertyForKey:kDoraemonProtocolKey inRequest:request]) {
+        if (isHistoryList) {
+            DoKitLog(@"❌ [DoraemonNSURLProtocol] historyList 请求已被标记，跳过拦截（避免循环）");
+        }
         return NO;
     }
-    if (![DoraemonNetworkInterceptor shareInstance].shouldIntercept) {
+    
+    // 检查拦截器是否已启用
+    BOOL shouldIntercept = [DoraemonNetworkInterceptor shareInstance].shouldIntercept;
+    if (!shouldIntercept) {
+        if (isHistoryList) {
+            DoKitLog(@"❌ [DoraemonNSURLProtocol] historyList 请求拦截失败: shouldIntercept = NO");
+            DoKitLog(@"❌ [DoraemonNSURLProtocol] 提示：请确保 DoKit 网络监控已开启");
+        }
         return NO;
     }
-    if (![request.URL.scheme isEqualToString:@"http"] &&
-        ![request.URL.scheme isEqualToString:@"https"]) {
+    
+    // 检查协议类型
+    NSString *scheme = request.URL.scheme ?: @"";
+    if (![scheme isEqualToString:@"http"] && ![scheme isEqualToString:@"https"]) {
+        if (isHistoryList) {
+            DoKitLog(@"❌ [DoraemonNSURLProtocol] historyList 请求拦截失败: scheme = %@ (不是 http/https)", scheme);
+        }
         return NO;
     }
-    //文件类型不作处理
-    NSString *contentType = [request valueForHTTPHeaderField:@"Content-Type"];
-    if (contentType && [contentType containsString:@"multipart/form-data"]) {
-        return NO;
-    }
+    
+    // 已移除 multipart/form-data 过滤，允许拦截文件上传请求
+    // NSString *contentType = [request valueForHTTPHeaderField:@"Content-Type"];
+    // if (contentType && [contentType containsString:@"multipart/form-data"]) {
+    //     return NO;
+    // }
     
 //    if ([self ignoreRequest:request]) {
 //        return NO;
 //    }
+    
+    if (isHistoryList) {
+        DoKitLog(@"✅ [DoraemonNSURLProtocol] historyList 请求将被拦截: %@", urlString);
+        DoKitLog(@"✅ [DoraemonNSURLProtocol] ========== historyList 请求检测通过 ==========");
+    }
     
     return YES;
 }
@@ -142,6 +176,13 @@ static NSString * const kDoraemonProtocolKey = @"doraemon_protocol_key";
     assert(self.task == nil);
     assert(self.modes == nil);
     
+    NSString *urlString = self.request.URL.absoluteString ?: @"";
+    BOOL isHistoryList = [urlString containsString:@"historyList"] || [urlString containsString:@"petVoice/historyList"];
+    
+    if (isHistoryList) {
+        DoKitLog(@"🚀 [DoraemonNSURLProtocol] historyList 请求开始加载: %@", urlString);
+    }
+    
     calculatedModes = [NSMutableArray array];
     [calculatedModes addObject:NSDefaultRunLoopMode];
     currentMode = [[NSRunLoop currentRunLoop] currentMode];
@@ -159,6 +200,11 @@ static NSString * const kDoraemonProtocolKey = @"doraemon_protocol_key";
     self.startTime = [[NSDate date] timeIntervalSince1970];
     self.task = [[[self class] sharedDemux] dataTaskWithRequest:recursiveRequest delegate:self modes:self.modes];
     assert(self.task != nil);
+    
+    if (isHistoryList) {
+        DoKitLog(@"✅ [DoraemonNSURLProtocol] historyList 请求任务已创建，taskIdentifier: %lu", (unsigned long)self.task.taskIdentifier);
+    }
+    
     if([DoraemonNetworkInterceptor shareInstance].weakDelegate){
         [self handleFromSelect];
     }else{
@@ -169,6 +215,21 @@ static NSString * const kDoraemonProtocolKey = @"doraemon_protocol_key";
 - (void)stopLoading{
     assert(self.clientThread != nil);
     assert([NSThread currentThread] == self.clientThread);
+    
+    NSString *urlString = self.request.URL.absoluteString ?: @"";
+    BOOL isHistoryList = [urlString containsString:@"historyList"] || [urlString containsString:@"petVoice/historyList"];
+    
+    if (isHistoryList) {
+        NSTimeInterval duration = [[NSDate date] timeIntervalSince1970] - self.startTime;
+        DoKitLog(@"🏁 [DoraemonNSURLProtocol] historyList 请求加载完成: %@", urlString);
+        DoKitLog(@"🏁 [DoraemonNSURLProtocol] 耗时: %.3f 秒，数据大小: %lu 字节", duration, (unsigned long)self.data.length);
+        if (self.error) {
+            DoKitLog(@"❌ [DoraemonNSURLProtocol] 错误: %@", self.error.localizedDescription);
+        } else {
+            DoKitLog(@"✅ [DoraemonNSURLProtocol] 请求成功");
+        }
+    }
+    
     [[DoraemonNetworkInterceptor shareInstance] handleResultWithData: self.data
                                                             response: self.response
                                                              request:self.request

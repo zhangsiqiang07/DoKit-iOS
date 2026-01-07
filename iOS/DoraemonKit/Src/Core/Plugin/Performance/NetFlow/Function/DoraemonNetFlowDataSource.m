@@ -7,6 +7,9 @@
 
 #import "DoraemonNetFlowDataSource.h"
 
+// 网络请求数据更新通知
+NSString * const DoraemonNetFlowDataSourceUpdateNotification = @"DoraemonNetFlowDataSourceUpdateNotification";
+
 @implementation DoraemonNetFlowDataSource{
     dispatch_semaphore_t semaphore;
 }
@@ -33,6 +36,11 @@
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     [_httpModelArray insertObject:httpModel atIndex:0];
     dispatch_semaphore_signal(semaphore);
+    
+    // 发送通知，通知列表刷新
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:DoraemonNetFlowDataSourceUpdateNotification object:nil];
+    });
 }
 
 - (void)clear{
